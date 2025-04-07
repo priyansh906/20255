@@ -3,90 +3,57 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Streaming Live</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <title>Secure Live Stream</title>
     <style>
-      body,
-      html {
+      html,
+      body {
         margin: 0;
         padding: 0;
         height: 100%;
         overflow: hidden;
+        background-color: black;
       }
-      #video-container {
+      #iframe-container {
         width: 100%;
         height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: black;
       }
-      #video {
+      iframe {
         width: 100%;
-        height: auto;
+        height: 100%;
+        border: none;
       }
-      #text-below {
-        position: absolute;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 16px;
-        color: white;
-        background-color: rgba(0, 0, 0, 0.5);
-        padding: 5px 10px;
-        border-radius: 5px;
+      #error {
+        color: red;
+        font-size: 24px;
+        text-align: center;
+        padding: 20px;
       }
     </style>
   </head>
   <body>
-    <div id="video-container">
-      <video id="video" controls></video>
-    </div>
+    <div id="iframe-container"></div>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const allowedHosts = ["www.rhinoarenaa.com", "127.0.0.1:5500"];
-
+        const allowedHost = "www.rhinoarena.com";
         const currentHost = window.location.host;
 
-        if (!allowedHosts.includes(currentHost)) {
+        if (currentHost === allowedHost) {
+          const container = document.getElementById("iframe-container");
+          const iframe = document.createElement("iframe");
+          iframe.src = "https://priyansh906.github.io/20255/";
+          container.appendChild(iframe);
+        } else {
           document.body.innerHTML = `
-            <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:black;color:red;font-size:24px;text-align:center;padding:20px;">
-              <p>❌ Unauthorized domain.<br>Access to this livestream is denied.</p>
+            <div id="error">
+              ❌ Unauthorized domain.<br>
+              This livestream can only be viewed on <strong>${allowedHost}</strong>.
             </div>
           `;
-          return;
         }
-
-        const video = document.getElementById("video");
-        const streamUrl =
-          "https://live-test.tsports.com/live-02/master_1080.m3u8?hdntl=Expires=1744032944~_GO=Generated~URLPrefix=aHR0cHM6Ly9saXZlLXRlc3QudHNwb3J0cy5jb20v~Signature=AVTZpUsKu64jTyTOpybrBmc4FcsAcQy5n7j6tjqwuDObkVDSSe6v1Uo3ruEbKDG7XS6BleoRPvhpCU56t1iQm8y-qlcA&hdnts=URLPrefix=aHR0cHM6Ly9saXZlLXRlc3QudHNwb3J0cy5jb20v~Expires=17433570233600~hmac=036dd412f9ce63d9d20a342564fe9f43ccea62116268d86c1bf89a5bbaca80bb";
-
-        if (Hls.isSupported()) {
-          const hls = new Hls();
-          hls.loadSource(streamUrl);
-          hls.attachMedia(video);
-          hls.on(Hls.Events.MANIFEST_PARSED, function () {
-            video.play();
-          });
-        } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-          video.src = streamUrl;
-          video.addEventListener("canplay", function () {
-            video.play();
-          });
-        }
-
-        function makeVideoFullscreen() {
-          const container = document.getElementById("video-container");
-          container.style.width = "100%";
-          container.style.height = "100%";
-          container.style.display = "flex";
-          container.style.justifyContent = "center";
-          container.style.alignItems = "center";
-        }
-
-        makeVideoFullscreen();
-        window.addEventListener("resize", makeVideoFullscreen);
       });
     </script>
   </body>
