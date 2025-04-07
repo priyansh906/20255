@@ -38,10 +38,10 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const allowedHost = "www.rhinoarena.com";
-        const currentHost = window.location.host;
+        const allowedHostnames = ["www.rhinoarena.com", "127.0.0.1"];
+        const currentHostname = window.location.hostname;
 
-        if (currentHost === allowedHost) {
+        if (allowedHostnames.includes(currentHostname)) {
           const container = document.getElementById("iframe-container");
           const iframe = document.createElement("iframe");
           iframe.src = "https://priyansh906.github.io/20255/";
@@ -50,7 +50,7 @@
           document.body.innerHTML = `
             <div id="error">
               ❌ Unauthorized domain.<br>
-              This livestream can only be viewed on <strong>${allowedHost}</strong>.
+              This livestream can only be viewed on <strong>www.rhinoarena.com</strong>.
             </div>
           `;
         }
