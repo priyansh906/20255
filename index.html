@@ -1,60 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Secure Live Stream</title>
-    <style>
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        overflow: hidden;
-        background-color: black;
-      }
-      #iframe-container {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-      }
-      #error {
-        color: red;
-        font-size: 24px;
-        text-align: center;
-        padding: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="iframe-container"></div>
+<head>
+  <meta charset="UTF-8">
+  <title>HLS Player</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      background: black;
+    }
+    .fullscreen-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      cursor: pointer;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const allowedHostnames = ["www.rhinoarena.com", "127.0.0.1"];
-        const currentHostname = window.location.hostname;
+  <button class="fullscreen-btn" onclick="toggleFullscreen()">Fullscreen</button>
+  <video id="video" controls></video>
 
-        if (allowedHostnames.includes(currentHostname)) {
-          const container = document.getElementById("iframe-container");
-          const iframe = document.createElement("iframe");
-          iframe.src = "https://priyansh906.github.io/20255/";
-          container.appendChild(iframe);
-        } else {
-          document.body.innerHTML = `
-            <div id="error">
-              ❌ Unauthorized domain.<br>
-              This livestream can only be viewed on <strong>www.rhinoarena.com</strong>.
-            </div>
-          `;
-        }
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script>
+    const video = document.getElementById('video');
+    const videoSrc = 'https://funn-g1163.huibo.tv/GE/H15/chunks.m3u8?p=46&cf=1742997600&d=&ip=126.115.249.216&e=1749998200&h=b1ede91b7df9b6cdae13da19379abefb';
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(videoSrc);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play();
       });
-    </script>
-  </body>
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = videoSrc;
+      video.addEventListener('loadedmetadata', () => {
+        video.play();
+      });
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        video.requestFullscreen().catch(err => {
+          alert(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+  </script>
+
+</body>
 </html>
